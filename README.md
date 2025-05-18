@@ -77,18 +77,18 @@ MariaDB veritabanı, Galera ile senkronize çalışarak yüksek erişilebilirlik
 
 | Node  | IP Adresi   | Hostname |
 |-------|-------------|----------|
-| Node1 | 10.0.0.1    | node1    |
-| Node2 | 10.0.0.2    | node2    |
-| Node3 | 10.0.0.3    | node3    |
+| Node1 | 10.0.0.5    | node1    |
+| Node2 | 10.0.0.6    | node2    |
+| Node3 | 10.0.0.7    | node3    |
 
 ---
 
 ```mermaid
 flowchart TD
     subgraph Galera_Cluster
-        N1["Node1 - 10.0.0.1"]
-        N2["Node2 - 10.0.0.2"]
-        N3["Node3 - 10.0.0.3"]
+        N1["Node1 - 10.0.0.5"]
+        N2["Node2 - 10.0.0.6"]
+        N3["Node3 - 10.0.0.7"]
     end
 
     subgraph Clients
