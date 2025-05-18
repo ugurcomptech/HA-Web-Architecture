@@ -28,61 +28,60 @@ classDef galera fill:#ccffcc,stroke:#333,stroke-width:2px;
 classDef gluster fill:#ff9999,stroke:#333,stroke-width:2px;
 
 %% WAF Katmanı
-subgraph WAF_Katmanı["WAF Katmanı (SafeLine)"]
-    WAF["WAF | IP: 10.0.0.1 | Güvenlik Filtreleme"]:::waf
+subgraph WAF_Katmanı["WAF Katmanı"]
+    WAF["SafeLine WAF\n10.0.0.1"]:::waf
 end
 
 %% HAProxy Load Balancer Katmanı
-subgraph Yük_Dengeleyici_Katmanı["Yük Dengeleyici (HAProxy)"]
-    HAProxy["HAProxy | IP: 10.0.0.2 | Port: 80/443 | Yük Dengeleme: Round-Robin | SSL Termination"]:::haproxy
+subgraph Yük_Dengeleyici_Katmanı["Yük Dengeleyici"]
+    HAProxy["HAProxy\n10.0.0.2\nPort: 80/443"]:::haproxy
 end
 
 %% Web Katmanı
-subgraph Web_Katmanı["Web Katmanı (NGINX)"]
-    NGINX1["NGINX1 | IP: 10.0.0.3 | Port: 80/443 | Statik İçerik Sunumu | Reverse Proxy"]:::nginx
-    NGINX2["NGINX2 | IP: 10.0.0.4 | Port: 80/443 | Statik İçerik Sunumu | Reverse Proxy"]:::nginx
+subgraph Web_Katmanı["Web Katmanı"]
+    NGINX1["NGINX1\n10.0.0.3"]:::nginx
+    NGINX2["NGINX2\n10.0.0.4"]:::nginx
 end
 
 %% Veritabanı Katmanı
-subgraph Veritabanı_Katmanı["Veritabanı Katmanı (MariaDB Galera Cluster)"]
-    Galera1["Galera Node1 | IP: 10.0.0.5 | Port: 3306 | Multi-Master Replikasyon"]:::galera
-    Galera2["Galera Node2 | IP: 10.0.0.6 | Port: 3306 | Multi-Master Replikasyon"]:::galera
-    Galera3["Galera Node3 | IP: 10.0.0.7 | Port: 3306 | Multi-Master Replikasyon"]:::galera
+subgraph Veritabanı_Katmanı["Veritabanı Katmanı"]
+    Galera1["Galera1\n10.0.0.5"]:::galera
+    Galera2["Galera2\n10.0.0.6"]:::galera
+    Galera3["Galera3\n10.0.0.7"]:::galera
 end
 
 %% Dosya Sistemi Katmanı
-subgraph Dosya_Sistemi_Katmanı["Dağıtık Dosya Sistemi (GlusterFS)"]
-    Gluster1["GlusterFS Node1 | IP: 10.0.0.3 | Replicated Volume | Brick: /data/gluster"]:::gluster
-    Gluster2["GlusterFS Node2 | IP: 10.0.0.4 | Replicated Volume | Brick: /data/gluster"]:::gluster
+subgraph Dosya_Sistemi_Katmanı["Dosya Sistemi Katmanı"]
+    Gluster1["Gluster1\n10.0.0.3"]:::gluster
+    Gluster2["Gluster2\n10.0.0.4"]:::gluster
 end
 
 %% Bağlantılar
-%% WAF -> HAProxy
 WAF -->|HTTP/HTTPS| HAProxy
-
-%% HAProxy ile NGINX Bağlantıları
 HAProxy -->|HTTP/HTTPS| NGINX1
 HAProxy -->|HTTP/HTTPS| NGINX2
 
-%% NGINX ile Galera Bağlantıları
-NGINX1 -->|MySQL:3306| Galera1
-NGINX1 -->|MySQL:3306| Galera3
-NGINX2 -->|MySQL:3306| Galera2
-NGINX2 -->|MySQL:3306| Galera3
+NGINX1 -->|MySQL| Galera1
+NGINX1 -->|MySQL| Galera3
+NGINX2 -->|MySQL| Galera2
+NGINX2 -->|MySQL| Galera3
 
-%% NGINX ile GlusterFS Bağlantıları
-NGINX1 -->|NFS/Gluster| Gluster1
-NGINX2 -->|NFS/Gluster| Gluster2
+NGINX1 -->|GlusterFS| Gluster1
+NGINX2 -->|GlusterFS| Gluster2
 
-%% Galera Cluster Replikasyon Bağlantıları
-Galera1 <-->|WSREP Replikasyon| Galera2
-Galera2 <-->|WSREP Replikasyon| Galera3
-Galera3 <-->|WSREP Replikasyon| Galera1
+Galera1 <-->|Replikasyon| Galera2
+Galera2 <-->|Replikasyon| Galera3
+Galera3 <-->|Replikasyon| Galera1
 
-%% GlusterFS Replikasyon Bağlantıları
-Gluster1 <-->|Gluster Replikasyon| Gluster2
+Gluster1 <-->|Replikasyon| Gluster2
 
 %% Açıklamalar
-note1["Notlar: İstekler önce WAF (SafeLine) tarafından filtrelenir, sonra HAProxy yük dengeleme yapar. NGINX sunucuları statik içerik sunar ve veritabanı ile dosya sistemi katmanlarına erişir. Galera Cluster multi-master replikasyon, GlusterFS paylaşılan dosya sistemi sağlar."]
+note1["📝 Notlar:
+- İstekler ilk olarak SafeLine WAF (10.0.0.1) tarafından filtrelenir.
+- HAProxy (10.0.0.2) istekleri Round-Robin ile NGINX sunucularına yönlendirir.
+- NGINX sunucuları (10.0.0.3 / 10.0.0.4) statik içerik sunar ve hem veritabanına (Galera) hem dosya sistemine (GlusterFS) erişir.
+- Galera Cluster multi-master replikasyon destekler.
+- GlusterFS düğümleri dosya sistemini yedekli paylaşır."]
+
 
 ```
