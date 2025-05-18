@@ -17,7 +17,7 @@ HAProxy, istemcilerden gelen trafiği arka planda çalışan birden fazla web su
 
 ## Yapıya Ait Genel Diyagram
 
-```
+```mermaid
 graph TD
 
 %% Stil Tanımları
