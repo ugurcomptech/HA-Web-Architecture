@@ -1,0 +1,9 @@
+HaProxy üzerinde dilerseniz direkt olarak Front tarafında crt komutuyla ssl sertifikaları belirtebilirsiniz fakat bu ileri ki süreçlerde çok fazla karmaşıklaşabilir. Bu karmaşıklığa engel olmak için 
+/etc/haproxy/certs/cluster.crtlist adında bir dosya oluşturunuz ve SSL sertifikalarınızı bu dosyanın içine yazınız. 
+
+Örnek çıktı:
+
+root@waf:~# cat /etc/haproxy/certs/cluster.crtlist
+/etc/haproxy/certs/test.com.pem
+/etc/haproxy/certs/cluster.test.com.pem
+root@waf:~# 
