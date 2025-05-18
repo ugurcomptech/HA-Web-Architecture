@@ -233,7 +233,134 @@ SELECT * FROM users;
 - Eğer görünmüyorsa, cluster bağlantısı veya senkronizasyon ile ilgili sorun vardır.
 
 
+## GlusterFS
 
+GlusterFS, birden fazla sunucu üzerinde veri paylaşımı ve senkronizasyon sağlamak için kullanılan açık kaynaklı bir dağıtık dosya sistemidir. Web sunucuları arasında dosya bütünlüğünü ve eşitliği koruyarak, tüm sunucuların aynı içerikle hizmet verebilmesini sağlar.
+
+
+### 1. GlusterFS Kurulumu
+
+**Her iki node'da (web1 ve web2):**
+- GlusterFS paketlerini yükleyin:
+  ```
+  sudo apt update
+  sudo apt install -y glusterfs-server
+  ```
+- GlusterFS servisini başlatın ve otomatik başlatmayı etkinleştirin:
+  ```
+  sudo systemctl start glusterd
+  sudo systemctl enable glusterd
+  ```
+- Servisin çalıştığını doğrulayın:
+  ```
+  sudo systemctl status glusterd
+  ```
+
+**Güvenlik Duvarı Ayarları:**
+- GlusterFS portlarını açın:
+  ```
+    sudo ufw allow 24007/tcp
+    sudo ufw allow 49152:49162/tcp
+    sudo ufw allow from 10.0.0.3 to any
+    sudo ufw allow from 10.0.0.4 to any
+  ```
+
+---
+
+### 2. GlusterFS Peer Yapılandırması
+
+**Primary Node'da (web1, 45.152.243.26):**
+- Secondary node'u peer olarak ekleyin:
+  ```
+    sudo gluster peer probe 10.0.0.4
+  ```
+- Peer durumunu kontrol edin:
+  ```
+  sudo gluster peer status
+  ```
+
+**Secondary Node'da (web2, 45.152.243.127):**
+- Primary node'u peer olarak ekleyin:
+  ```
+  sudo gluster peer probe 10.0.0.3
+
+  ```
+- Peer durumunu kontrol edin:
+  ```
+  sudo gluster peer status
+  ```
+
+---
+
+### 3. GlusterFS Volume Oluşturma
+
+**Her iki node'da:**
+- GlusterFS brick dizinini oluşturun:
+  ```
+  sudo mkdir -p /data/web
+  ```
+
+**Primary Node'da (web1):**
+- Replike bir volume oluşturun:
+  ```
+    sudo gluster volume create web-vol replica 2 10.0.0.3:/data/web 10.0.0.4:/data/web force
+
+  ```
+- Volume'u başlatın:
+  ```
+  sudo gluster volume start web-vol
+  ```
+- Volume durumunu kontrol edin:
+  ```
+  sudo gluster volume info
+  ```
+
+---
+
+### 4. Web Dosyalarını Senkronize Etme
+
+**Her iki node'da:**
+- GlusterFS volume'unu mount edin:
+  ```
+  sudo mkdir -p /var/www/html
+    sudo mount -t glusterfs 10.0.0.3:/web-vol /var/www/html
+  ```
+- Mount durumunu kontrol edin:
+  ```
+  df -h | grep web-vol
+  ```
+- Mount işlemini kalıcı yapmak için /etc/fstab'a ekleyin:
+  ```
+    echo "10.0.0.3:/web-vol /var/www/html glusterfs defaults,_netdev 0 0" | sudo tee -a /etc/fstab
+
+  ```
+
+**Primary Node'da (web1):**
+- Test dosyası oluşturun:
+  ```
+  echo "GlusterFS cluster testi başarılı!" | sudo tee /var/www/html/test.html
+  ```
+
+---
+
+### 5. Web Sunucusu Yapılandırması (Nginx)
+
+**Her iki node'da:**
+- Nginx'i kurun:
+  ```
+  sudo apt install -y nginx
+  ```
+- Nginx'in /var/www/html dizinini kullandığını doğrulayın:
+  ```
+  sudo cat /etc/nginx/sites-available/default
+  ```
+  (root /var/www/html; satırı mevcut olmalı)
+- Nginx'i yeniden başlatın:
+  ```
+  sudo systemctl restart nginx
+  ```
+
+---
 
 
 
