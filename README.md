@@ -20,40 +20,33 @@ HAProxy, istemcilerden gelen trafiği arka planda çalışan birden fazla web su
 ```mermaid
 graph TD
 
-%% Stil Tanımları
-classDef waf fill:#ff6666,stroke:#333,stroke-width:2px;
-classDef haproxy fill:#ffcc99,stroke:#333,stroke-width:2px;
-classDef nginx fill:#99ccff,stroke:#333,stroke-width:2px;
-classDef galera fill:#ccffcc,stroke:#333,stroke-width:2px;
-classDef gluster fill:#ff9999,stroke:#333,stroke-width:2px;
-
 %% WAF Katmanı
 subgraph WAF["WAF Katmanı"]
-    WAF1["SafeLine\n10.0.0.1"]:::waf
+    WAF1["SafeLine\n10.0.0.1"]
 end
 
 %% HAProxy Katmanı
 subgraph LB["Yük Dengeleyici"]
-    HAProxy["HAProxy\n10.0.0.2"]:::haproxy
+    HAProxy["HAProxy\n10.0.0.2"]
 end
 
 %% Web Katmanı
 subgraph Web["Web Katmanı"]
-    NGINX1["NGINX-1\n10.0.0.3"]:::nginx
-    NGINX2["NGINX-2\n10.0.0.4"]:::nginx
+    NGINX1["NGINX-1\n10.0.0.3"]
+    NGINX2["NGINX-2\n10.0.0.4"]
 end
 
-%% DB Katmanı
+%% Veritabanı Katmanı
 subgraph DB["Veritabanı Katmanı"]
-    Galera1["Galera-1\n10.0.0.5"]:::galera
-    Galera2["Galera-2\n10.0.0.6"]:::galera
-    Galera3["Galera-3\n10.0.0.7"]:::galera
+    Galera1["Galera-1\n10.0.0.5"]
+    Galera2["Galera-2\n10.0.0.6"]
+    Galera3["Galera-3\n10.0.0.7"]
 end
 
-%% FS Katmanı
+%% Dosya Sistemi Katmanı
 subgraph FS["Dosya Sistemi"]
-    Gluster1["Gluster-1\n10.0.0.3"]:::gluster
-    Gluster2["Gluster-2\n10.0.0.4"]:::gluster
+    Gluster1["Gluster-1\n10.0.0.3"]
+    Gluster2["Gluster-2\n10.0.0.4"]
 end
 
 %% Bağlantılar
