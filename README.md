@@ -22,31 +22,31 @@ graph TD
 
 %% WAF Katmanı
 subgraph WAF["WAF Katmanı"]
-    WAF1["SafeLine\n10.0.0.1"]
+    WAF1["SafeLine - 10.0.0.1"]
 end
 
 %% HAProxy Katmanı
 subgraph LB["Yük Dengeleyici"]
-    HAProxy["HAProxy\n10.0.0.2"]
+    HAProxy["HAProxy - 10.0.0.2"]
 end
 
 %% Web Katmanı
 subgraph Web["Web Katmanı"]
-    NGINX1["NGINX-1\n10.0.0.3"]
-    NGINX2["NGINX-2\n10.0.0.4"]
+    NGINX1["NGINX-1 - 10.0.0.3"]
+    NGINX2["NGINX-2 - 10.0.0.4"]
 end
 
 %% Veritabanı Katmanı
 subgraph DB["Veritabanı Katmanı"]
-    Galera1["Galera-1\n10.0.0.5"]
-    Galera2["Galera-2\n10.0.0.6"]
-    Galera3["Galera-3\n10.0.0.7"]
+    Galera1["Galera-1 - 10.0.0.5"]
+    Galera2["Galera-2 - 10.0.0.6"]
+    Galera3["Galera-3 - 10.0.0.7"]
 end
 
 %% Dosya Sistemi Katmanı
 subgraph FS["Dosya Sistemi"]
-    Gluster1["Gluster-1\n10.0.0.3"]
-    Gluster2["Gluster-2\n10.0.0.4"]
+    Gluster1["Gluster-1 - 10.0.0.3"]
+    Gluster2["Gluster-2 - 10.0.0.4"]
 end
 
 %% Bağlantılar
