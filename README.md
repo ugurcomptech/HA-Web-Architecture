@@ -71,7 +71,7 @@ Gluster1 <-->|Replikasyon| Gluster2
 
 ## Galera Cluster 
 
----
+MariaDB veritabanı, Galera ile senkronize çalışarak yüksek erişilebilirlik (HA) ve veri tutarlılığı sağlar.
 
 ## 🌐 Cluster Yapılandırması
 
