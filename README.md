@@ -293,6 +293,10 @@ SafeLine, DDoS, brute-force ve diğer saldırılara karşı koruma sağlayan bir
    - Tarayıcıda `https://<IP>:9443` adresine giderek yapılandırmayı tamamlayın.
    - Daha fazla bilgi için: [SafeLine GitHub](https://github.com/chaitin/SafeLine).
 
+**NOT:** SafeLine WAF’ın port 80 üzerindeki birden fazla uygulamayı yönetme sorunu, tek dinleyici kısıtlaması ve yol tabanlı yönlendirme eksikliğinden kaynaklanır. Tek dinleyici kısıtlaması, SafeLine’ın önyüzde yalnızca tek bir port 80 dinleyicisi tanımlayabilmesi anlamına gelir. Eğer birden fazla uygulama aynı portu kullanmak isterse, SafeLine hangi uygulamanın arka uç sunucusuna yönlendirme yapacağını bilemez ve "duplicate port error" hatası oluşur. Bu, SafeLine’ın mimari tasarımının bir sonucudur ve aynı port üzerinden gelen istekleri ayırt etmek için ek bir mekanizmaya ihtiyaç duyar. Çözüm olarak, her uygulama için farklı bir domain veya alt domain (örneğin, app1.example.com, app2.example.com) kullanılarak Host tabanlı yönlendirme yapılır. Böylece SafeLine, HTTP Host başlığına göre istekleri doğru sunucuya yönlendirir.
+
+Yol tabanlı yönlendirme eksikliği ise SafeLine’ın URL yollarına (örneğin, example.com/app1, example.com/app2) göre istekleri ayırt edememesinden kaynaklanır. Modern ters vekil sunucularında yaygın olan bu özellik, SafeLine’ın mevcut sürümünde bulunmaz ve bu durum, birden fazla uygulamanın tek bir domain altında farklı yollarla çalışmasını engeller. Bu eksiklik, SafeLine’ın daha basit ve performans odaklı bir tasarım hedeflemesinden veya geliştirme önceliklerinden kaynaklanabilir. Sonuç olarak, SafeLine ile birden fazla uygulamayı port 80 üzerinde çalıştırmak için domain tabanlı yönlendirme zorunludur; yol tabanlı yönlendirme için ise Nginx gibi başka bir ters vekil sunucusuyla entegrasyon düşünülebilir.
+
 ---
 
 ## 4. HAProxy (Yük Dengeleyici)
