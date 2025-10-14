@@ -13,8 +13,10 @@ Bu belge, yüksek erişilebilirlik (HA) sunan bir web mimarisinin kurulumunu ve 
 
 Mimari de bildiğiniz gibi istekler ilk öncelikle WAF katmanına ulaşıyor daha sonra LB ye ulaşıp web sunucularına iletiliyordu. Bu yapıya ek olarak WAF katmanın önüne ekstradan daha güvenlikli olacak şekilde bir HaProxy katmanı daha ekledim. Bu HaProxy katmanı içerisinde bulunan configleri repo üzerinden ulaşabilirsiniz. Config içerisinde gelen istekleri sınırlama, XSS, SQL enjeksiyonu ve HaProxynin stick-table özelliğinden faydalanarak daha güvenlikli bir yapı oluşturdum. Buna ek olarak Web siteleriniz için ülke IP blok engellemeleri, kötü itibarlı IP adreslerinin engellenmesi gibi ekstra configlerde bulunmaktadır. İlgili işlemlerin nasıl yapılacağını aşağıda bırakmış olduğum linkler üzerinden ulaşabilirsiniz. 
 
-https://github.com/ugurcomptech/Haproxy-Abuseipdb-Blocklist
-https://github.com/ugurcomptech/Haproxy-Ip2location-Turkey-Filter
+[Kötü İtibarlı IP Adreslerinin Engellenmesi](https://github.com/ugurcomptech/Haproxy-Abuseipdb-Blocklist)
+
+
+[Ülke IP Blok Filtreleme](https://github.com/ugurcomptech/Haproxy-Ip2location-Turkey-Filter)
 
 ## Mimari Diyagramı
 
