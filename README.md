@@ -31,18 +31,16 @@ graph TD
     WAF --> LB1[Haproxy LB1]
     WAF --> LB2[Haproxy LB2]
 
-    %% LB1 Backend
+    %% LB Backend (2 Nginx)
     LB1 --> N1[Nginx1]
     LB1 --> N2[Nginx2]
 
-    %% LB2 Backend
-    LB2 --> N3[Nginx1]
-    LB2 --> N4[Nginx2]
+    LB2 --> N1
+    LB2 --> N2
 
     %% GlusterFS Cluster (Web server file sync)
     subgraph GlusterFS
         N1 --- N2
-        N3 --- N4
     end
 
     %% Galera Cluster (MySQL)
@@ -58,20 +56,17 @@ graph TD
     %% Web Servers to DB
     N1 -->|DB Replication| DB1
     N2 -->|DB Replication| DB2
-    N3 -->|DB Replication| DB1
-    N4 -->|DB Replication| DB3
 
-    %% Styling (daha anlaşılır renkler)
+    %% Styling
     style ST fill:#ffe6e6,stroke:#ff3333,stroke-width:2px
     style WAF fill:#fff0e6,stroke:#ff9933,stroke-width:2px
     style LB1 fill:#e6f3ff,stroke:#4a90e2,stroke-width:2px
     style LB2 fill:#e6f3ff,stroke:#4a90e2,stroke-width:2px
     style N1 fill:#dfffe0,stroke:#33a532,stroke-width:2px
     style N2 fill:#dfffe0,stroke:#33a532,stroke-width:2px
-    style N3 fill:#dfffe0,stroke:#33a532,stroke-width:2px
-    style N4 fill:#dfffe0,stroke:#33a532,stroke-width:2px
     style GlusterFS fill:#f0f0f0,stroke:#999,stroke-width:1px,stroke-dasharray:5 5
     style Galera fill:#fff7e6,stroke:#ff9900,stroke-width:1px,stroke-dasharray:5 5
+
 
 
 ```
