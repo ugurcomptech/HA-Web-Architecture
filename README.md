@@ -24,49 +24,56 @@ Aşağıdaki diyagram, sistemin katmanlarını ve bileşenler arasındaki bağla
 
 ```mermaid
 graph TD
-    %% WAF Katmanı
-    subgraph WAF["Güvenlik Katmanı (WAF)"]
-        WAF1["SafeLine - 10.0.0.1"]
+    %% Katmanlar
+    ST[Haproxy-IDS-IPS-Stick Table] --> WAF[AA WAF]
+
+    %% WAF yönlendirmesi
+    WAF --> LB1[Haproxy LB1]
+    WAF --> LB2[Haproxy LB2]
+
+    %% LB1 Backend
+    LB1 --> N1[Nginx1]
+    LB1 --> N2[Nginx2]
+
+    %% LB2 Backend
+    LB2 --> N3[Nginx1]
+    LB2 --> N4[Nginx2]
+
+    %% GlusterFS Cluster (Web server file sync)
+    subgraph GlusterFS
+        N1 --- N2
+        N3 --- N4
     end
 
-    %% HAProxy Katmanı
-    subgraph LB["Yük Dengeleyici"]
-        HAProxy["HAProxy - 10.0.0.2"]
+    %% Galera Cluster (MySQL)
+    subgraph Galera
+        DB1[(MySQL1)]
+        DB2[(MySQL2)]
+        DB3[(MySQL3)]
+        DB1 --- DB2
+        DB2 --- DB3
+        DB3 --- DB1
     end
 
-    %% Web Katmanı
-    subgraph Web["Web Katmanı"]
-        NGINX1["NGINX-1 - 10.0.0.3"]
-        NGINX2["NGINX-2 - 10.0.0.4"]
-    end
+    %% Web Servers to DB
+    N1 -->|DB Replication| DB1
+    N2 -->|DB Replication| DB2
+    N3 -->|DB Replication| DB1
+    N4 -->|DB Replication| DB3
 
-    %% Veritabanı Katmanı
-    subgraph DB["Veritabanı Katmanı"]
-        Galera1["Galera-1 - 10.0.0.5"]
-        Galera2["Galera-2 - 10.0.0.6"]
-        Galera3["Galera-3 - 10.0.0.7"]
-    end
+    %% Styling (daha anlaşılır renkler)
+    style ST fill:#ffe6e6,stroke:#ff3333,stroke-width:2px
+    style WAF fill:#fff0e6,stroke:#ff9933,stroke-width:2px
+    style LB1 fill:#e6f3ff,stroke:#4a90e2,stroke-width:2px
+    style LB2 fill:#e6f3ff,stroke:#4a90e2,stroke-width:2px
+    style N1 fill:#dfffe0,stroke:#33a532,stroke-width:2px
+    style N2 fill:#dfffe0,stroke:#33a532,stroke-width:2px
+    style N3 fill:#dfffe0,stroke:#33a532,stroke-width:2px
+    style N4 fill:#dfffe0,stroke:#33a532,stroke-width:2px
+    style GlusterFS fill:#f0f0f0,stroke:#999,stroke-width:1px,stroke-dasharray:5 5
+    style Galera fill:#fff7e6,stroke:#ff9900,stroke-width:1px,stroke-dasharray:5 5
 
-    %% Dosya Sistemi Katmanı
-    subgraph FS["Dosya Sistemi"]
-        Gluster1["Gluster-1 - 10.0.0.3"]
-        Gluster2["Gluster-2 - 10.0.0.4"]
-    end
 
-    %% Bağlantılar
-    WAF1 --> HAProxy
-    HAProxy --> NGINX1
-    HAProxy --> NGINX2
-    NGINX1 --> Galera1
-    NGINX1 --> Galera3
-    NGINX2 --> Galera2
-    NGINX2 --> Galera3
-    NGINX1 --> Gluster1
-    NGINX2 --> Gluster2
-    Galera1 <-->|Replikasyon| Galera2
-    Galera2 <-->|Replikasyon| Galera3
-    Galera3 <-->|Replikasyon| Galera1
-    Gluster1 <-->|Replikasyon| Gluster2
 ```
 
 ---
